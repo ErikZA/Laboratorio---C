@@ -3,7 +3,8 @@
 #include <string.h>
 #include<stdbool.h>
 #include <conio.h>
-#define TAM 6
+#define TAM 2
+#define PER 5
 /*Trab_03) Defina um registro denoninado 'Onibus' que representa um um ônibus, que reúne as seguintes informações:
 • Cidade de origem (string)
 • Cidade de destino (string)
@@ -61,10 +62,10 @@ struct onibus{
     char cidadeDestino[11111];
     float distancia;
     POL poltrona[TAM];
-    int ocupado;
 };
 
-link cadastraRegistro(link r){
+
+link cadastraRegistro(link r, int *ocupado, int cont){
         int check= 1;
         r.data.ano = 0;
         system("cls");
@@ -97,7 +98,7 @@ link cadastraRegistro(link r){
         scanf("%d",&r.data.time.segundos);
         }while(r.data.dia>30 || r.data.ano<2000 || r.data.mes>12 || r.data.time.hora>23 || r.data.time.minutos>60);
         system("cls");
-        r.ocupado = 0;
+        ocupado[cont] = 0;
         printf("\n|-----------CADASTRO BEM SUCEDIDO!!----------|\n");
         return r;
 }
@@ -136,15 +137,16 @@ int cadastraPassageiros2(link *p, int cont, int opc){
             return cont;
         }
     }
+    return cont;
 }
 
-void cadastraPassageiros( link *p, int size ){
+void cadastraPassageiros( link *p, int ocupado[], int size ){
     int i,cont=0, opc;
             printf("\n|------------DADOS DOS ONIBUS CADASTRADOS-----------|\n");
     for(i=0; i< size; i++){
             printf("|Registro %d: Origem: %s - Destino: %s - Partida: %d/%d/%d - %d:%d:%d    - Vagas: %d  |\n", cont,
                    p[i].cidadeOrigem, p[i].cidadeDestino, p[i].data.dia, p[i].data.mes, p[i].data.ano,
-                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-p[i].ocupado);
+                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-ocupado[i]);
             cont++;
         }
             printf("\n|  Quantidade de registros %d                 |\n\n",cont);
@@ -156,32 +158,32 @@ void cadastraPassageiros( link *p, int size ){
             if(opc>=size || opc<0){
                 system("cls");
                 printf("\n|  Entrada invalida:                          |\n");
-                cadastraPassageiros(p,size);
+                cadastraPassageiros(p,ocupado,size);
             }
             else{
-                if(p[opc].ocupado == TAM)
+                if(ocupado[size] == TAM)
                     printf("\n|  Onibus Lotado:                             |\n");
                 else
-                    p[opc].ocupado = cadastraPassageiros2(p,p[opc].ocupado,opc);
+                    ocupado[opc] = cadastraPassageiros2(p,ocupado[opc],opc);
             }
 }
 
-void listaOcupacao( link *p, int size ){
+void listaOcupacao( link *p, int ocupado[], int size ){
     int i,cont=0;
             printf("\n|------------DADOS DOS ONIBUS CADASTRADOS-----------|\n");
     for(i=0; i< size; i++){
             printf("|Registro %d: Origem: %s - Destino: %s - Partida: %d/%d/%d - %d:%d:%d    - Vagas: %d  |\n", cont,
                    p[i].cidadeOrigem, p[i].cidadeDestino, p[i].data.dia, p[i].data.mes, p[i].data.ano,
-                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-p[i].ocupado);
-            printf("|Registro %d: Ocupado: %d%% - Livre: %d%%  |\n\n", cont, p[i].ocupado*100/TAM, ((p[i].ocupado-TAM)*-1)*100/TAM);
+                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-ocupado[i]);
+            printf("|Registro %d: Ocupado: %d%% - Livre: %d%%  |\n\n", cont, ocupado[i]*100/TAM, ((ocupado[i]-TAM)*-1)*100/TAM);
             cont++;
         }
             printf("\n|  Quantidade de registros %d                 |\n\n",cont);
 }
 
-int contaHomens(link p){
+int contaHomens(link p, int ocupado[], int size){
     int i, cont=0;
-    for(i=0;i<p.ocupado;i++){
+    for(i=0;i<ocupado[size];i++){
           //  printf("%d xx\n\n",p.poltrona[i].passagem);
         if(p.poltrona[i].sexo == 'M'){
             cont++;
@@ -190,12 +192,12 @@ int contaHomens(link p){
     if(cont==0)
         return 0;
     else
-        return cont*100/p.ocupado;
+        return cont*100/ocupado[size];
 }
 
-int contaMulheres(link p){
+int contaMulheres(link p, int ocupado[], int size){
     int i, cont=0;
-    for(i=0;i<p.ocupado;i++){
+    for(i=0;i<ocupado[size];i++){
             //printf("%d xx\n\n",p.poltrona[i].passagem);
         if(p.poltrona[i].sexo == 'F'){
             cont++;
@@ -204,25 +206,26 @@ int contaMulheres(link p){
     if(cont==0)
         return 0;
     else
-        return cont*100/p.ocupado;
+        return cont*100/ocupado[size];
 }
 
-void listaHomensMulhers( link *p, int size ){
+void listaHomensMulhers( link *p, int ocupado[], int size ){
     int i,cont=0;
             printf("\n|------------DADOS DOS ONIBUS CADASTRADOS-----------|\n");
     for(i=0; i< size; i++){
             printf("|Registro %d: Origem: %s - Destino: %s - Partida: %d/%d/%d - %d:%d:%d    - Vagas: %d  |\n", cont,
                    p[i].cidadeOrigem, p[i].cidadeDestino, p[i].data.dia, p[i].data.mes, p[i].data.ano,
-                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-p[i].ocupado);
-            printf("|Registro %d: Homens: %d%% - Mulheres: %d%%  |\n\n", cont, contaHomens(p[i]), contaMulheres(p[i]));
+                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-ocupado[i]);
+            printf("|Registro %d: Homens: %d%% - Mulheres: %d%%  |\n\n", cont,
+                   contaHomens(p[i],ocupado,i), contaMulheres(p[i],ocupado,i));
             cont++;
         }
             printf("\n|  Quantidade de registros %d                 |\n\n",cont);
 }
 
-void imprimePoltronas(link *p, int i){
+void imprimePoltronas(link *p,int ocupado[], int i){
     int x;
-    for(x=0; x<p[i].ocupado;x++){
+    for(x=0; x<ocupado[i];x++){
         printf("\n|_____Poltrona %d_____|\n",x+1);
         printf("| Passagem: %d          |\n",p[i].poltrona[x].passagem);
         printf("| Passageiro: %s        |\n",p[i].poltrona[x].passageiro);
@@ -231,17 +234,17 @@ void imprimePoltronas(link *p, int i){
     }
 }
 
-void listaTodos(link *p, int size){
+void listaTodos(link *p,int ocupado[], int size){
     int i,cont=0;
             printf("\n|------------DADOS DOS ONIBUS CADASTRADOS-----------|\n");
     for(i=0; i< size; i++){
-            printf("\n|Registro %d: Origem: %s - Destino: %s - Partida: %d/%d/%d - %d:%d:%d    - Vagas: %d  |\n", cont,
+            printf("\n\n|Registro %d: Origem: %s - Destino: %s - Partida: %d/%d/%d - %d:%d:%d    - Vagas: %d  |\n", cont,
                    p[i].cidadeOrigem, p[i].cidadeDestino, p[i].data.dia, p[i].data.mes, p[i].data.ano,
-                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-p[i].ocupado);
-                   imprimePoltronas(p,i);
+                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-ocupado[i]);
+                   imprimePoltronas(p,ocupado,i);
             cont++;
         }
-            printf("\n|  Quantidade de registros %d                 |\n\n",cont);
+            printf("\n\n|  Quantidade de registros %d                 |\n\n",cont);
 }
 
 void calcula(link *p, int size){
@@ -275,13 +278,13 @@ void calcula(link *p, int size){
 }
 
 
-void listaChegada( link *p, int size ){
+void listaChegada( link *p, int ocupado[], int size ){
      int i,cont=0;
             printf("\n|------------DADOS DOS ONIBUS CADASTRADOS-----------|\n");
     for(i=0; i< size; i++){
             printf("|Registro %d: Origem: %s - Destino: %s - Partida: %d/%d/%d - %d:%d:%d    - Vagas: %d  |\n", cont,
                    p[i].cidadeOrigem, p[i].cidadeDestino, p[i].data.dia, p[i].data.mes, p[i].data.ano,
-                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-p[i].ocupado);
+                   p[i].data.time.hora, p[i].data.time.minutos, p[i].data.time.segundos, TAM-ocupado[i]);
             calcula(p,i);
             cont++;
         }
@@ -290,14 +293,17 @@ void listaChegada( link *p, int size ){
 
 int main(){
 
-    link persist[50], registro;
+    link persist[PER], registro;
     char opc;
-    int cont=0;
+    int cont=0,i, ocupado[PER];
 
     if(TAM<40)
         printf("ALTERE A VARIAVEL GLOBAL PARA UTILIZAR 100%% OU OS 40 REGISTROS \nATUALMENTE ESTA DEFINIDA EM %d REGISTROS PARA POLTRONAS\nO VETOR DE PERSISTENCIA PODE SER ALTERADO COMO DESEJAR\nATUALMENTE SUPORTA 50 REGISTROS\n",TAM);
 
      do{
+        for(i =0; i<PER; i++)
+            printf("BOSTAS %d\n", ocupado[i]);
+
         printf("\n");
         printf("|  1 - Cadastrar Onibus                          |\n");
         printf("|  2 - Cadastrar Passageiros                     |\n");
@@ -312,8 +318,8 @@ int main(){
         fflush(stdin);
         switch(opc){
             case '1':
-                if(cont < 50){
-                    persist[cont] = cadastraRegistro(registro);
+                if(cont < PER){
+                    persist[cont] = cadastraRegistro(registro,ocupado,cont);
                     cont++;
                 } else {
                     system("cls");
@@ -322,23 +328,23 @@ int main(){
                 break;
             case '2':
                 system("cls");
-                cadastraPassageiros(persist,cont);
+                cadastraPassageiros(persist,ocupado,cont);
                 break;
             case '3':
                 system("cls");
-                listaOcupacao(persist,cont);
+                listaOcupacao(persist,ocupado,cont);
                 break;
             case '4':
                 system("cls");
-                listaHomensMulhers(persist,cont);
+                listaHomensMulhers(persist,ocupado,cont);
                 break;
             case '5':
                 system("cls");
-                listaTodos(persist,cont);
+                listaTodos(persist,ocupado,cont);
                 break;
             case '6':
                 system("cls");
-                listaChegada(persist,cont);
+                listaChegada(persist,ocupado,cont);
                 break;
             case '0':
                 break;
