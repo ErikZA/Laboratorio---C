@@ -301,9 +301,6 @@ int main(){
         printf("ALTERE A VARIAVEL GLOBAL PARA UTILIZAR 100%% OU OS 40 REGISTROS \nATUALMENTE ESTA DEFINIDA EM %d REGISTROS PARA POLTRONAS\nO VETOR DE PERSISTENCIA PODE SER ALTERADO COMO DESEJAR\nATUALMENTE SUPORTA 50 REGISTROS\n",TAM);
 
      do{
-        for(i =0; i<PER; i++)
-            printf("BOSTAS %d\n", ocupado[i]);
-
         printf("\n");
         printf("|  1 - Cadastrar Onibus                          |\n");
         printf("|  2 - Cadastrar Passageiros                     |\n");
